@@ -1,3 +1,11 @@
-export default function Button({ handleLoadMore }) {
-  return <button onClick={handleLoadMore}>Load more</button>;
-}
+import style from './Button.module.css';
+
+const Button = ({ handleLoadMore }) => {
+  return (
+    <button className={style.Button} onClick={handleLoadMore}>
+      Load more
+    </button>
+  );
+};
+
+export default Button;

@@ -1,5 +1,6 @@
 import { Component } from 'react';
-// import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Searchbar from './Searchbar';
 import ImageGallery from './ImageGallery';
@@ -15,6 +16,7 @@ export default class App extends Component {
     isModalOpen: false,
     images: [],
     modalImg: '',
+    isLoading: false,
   };
 
   handleSetQuery = ({ target: { name, value } }) => {
@@ -23,6 +25,12 @@ export default class App extends Component {
 
   handleFormSubmit = event => {
     event.preventDefault();
+
+    if (this.state.query.trim() === '') {
+      toast.error('Введите название');
+      return;
+    }
+
     this.setState({ isPending: true, page: 1 });
   };
 
@@ -49,7 +57,7 @@ export default class App extends Component {
   }
 
   render() {
-    const { isModalOpen, images, query, modalImg } = this.state;
+    const { isModalOpen, images, query, modalImg, isLoading } = this.state;
     const {
       handleSetQuery,
       handleFormSubmit,
@@ -64,7 +72,7 @@ export default class App extends Component {
           handleFormSubmit={handleFormSubmit}
         />
         <ImageGallery images={images} handleTogleModal={handleTogleModal} />
-        {/* <ToastContainer autoClose={3000} /> */}
+        <ToastContainer autoClose={3000} />
         {images.length >= 12 && (
           <Button handleLoadMore={handleLoadMore.bind(this)} />
         )}
