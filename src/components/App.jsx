@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Puff } from 'react-loader-spinner';
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 
 import Searchbar from './Searchbar';
 import ImageGallery from './ImageGallery';
@@ -29,6 +30,7 @@ export default class App extends Component {
 
     if (this.state.query.trim() === '') {
       toast.error('Введите название');
+      this.setState({ images: [] });
       return;
     }
 
@@ -66,6 +68,7 @@ export default class App extends Component {
         })
         .catch(error => {
           console.log(error.message);
+          this.setState({ isPending: false });
         });
     }
   }

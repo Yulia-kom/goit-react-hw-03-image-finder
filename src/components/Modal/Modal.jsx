@@ -18,7 +18,7 @@ export default class Modal extends Component {
   }
 
   render() {
-    const { modalImg, handleTogleModal } = this.props;
+    const { modalImg, handleTogleModal, tags } = this.props;
     return (
       <div
         className={style.Overlay}
@@ -29,7 +29,7 @@ export default class Modal extends Component {
         }}
       >
         <div className={style.Modal}>
-          <img src={modalImg} alt={tag} />
+          <img src={modalImg} alt={tags} />
         </div>
       </div>
     );
