@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { ImSearch } from 'react-icons/im';
 import style from './Searchbar.module.css';
 
@@ -25,3 +26,9 @@ export default function Searchbar({ query, handleSetQuery, handleFormSubmit }) {
     </header>
   );
 }
+
+Searchbar.propTypes = {
+  query: PropTypes.string.isRequired,
+  handleSetQuery: PropTypes.func.isRequired,
+  handleFormSubmit: PropTypes.func.isRequired,
+};

@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Puff } from 'react-loader-spinner';
 
 import Searchbar from './Searchbar';
 import ImageGallery from './ImageGallery';
@@ -16,7 +17,7 @@ export default class App extends Component {
     isModalOpen: false,
     images: [],
     modalImg: '',
-    isLoading: false,
+    modalAlt: '',
   };
 
   handleSetQuery = ({ target: { name, value } }) => {
@@ -34,10 +35,11 @@ export default class App extends Component {
     this.setState({ isPending: true, page: 1 });
   };
 
-  handleTogleModal = image => {
+  handleTogleModal = (image, alt) => {
     this.setState(prev => ({
       isModalOpen: !prev.isModalOpen,
       modalImg: image,
+      modalAlt: alt,
     }));
   };
 
@@ -46,18 +48,31 @@ export default class App extends Component {
   }
 
   componentDidUpdate() {
-    if (this.state.isPending) {
-      fetchImages(this.state.query, this.state.page).then(img => {
-        this.setState(prev => ({
-          images: this.state.page > 1 ? [...prev.images, ...img] : img,
-          isPending: false,
-        }));
-      });
+    const { query, page, isPending } = this.state;
+    if (isPending) {
+      fetchImages(query, page)
+        .then(img => {
+          if (img.length === 0) {
+            return (
+              this.setState({ isPending: false }),
+              toast(`Нет картинок с запросом "${query}"`)
+            );
+          }
+
+          this.setState(prev => ({
+            images: this.state.page > 1 ? [...prev.images, ...img] : img,
+            isPending: false,
+          }));
+        })
+        .catch(error => {
+          console.log(error.message);
+        });
     }
   }
 
   render() {
-    const { isModalOpen, images, query, modalImg, isLoading } = this.state;
+    const { isModalOpen, images, query, modalImg, modalAlt, isPending } =
+      this.state;
     const {
       handleSetQuery,
       handleFormSubmit,
@@ -65,7 +80,7 @@ export default class App extends Component {
       handleLoadMore,
     } = this;
     return (
-      <div style={{ maxWidth: 1170, margin: '0 auto', padding: 20 }}>
+      <div style={{ textAlign: 'center', padding: 20 }}>
         <Searchbar
           handleSetQuery={handleSetQuery}
           query={query}
@@ -73,11 +88,18 @@ export default class App extends Component {
         />
         <ImageGallery images={images} handleTogleModal={handleTogleModal} />
         <ToastContainer autoClose={3000} />
+        {isPending && (
+          <Puff ariaLabel="loading" color="#00BFFF" height={60} width={60} />
+        )}
         {images.length >= 12 && (
           <Button handleLoadMore={handleLoadMore.bind(this)} />
         )}
         {isModalOpen && (
-          <Modal modalImg={modalImg} handleTogleModal={handleTogleModal} />
+          <Modal
+            modalImg={modalImg}
+            handleTogleModal={handleTogleModal}
+            tag={modalAlt}
+          />
         )}
       </div>
     );
